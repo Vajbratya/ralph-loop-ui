@@ -138,15 +138,16 @@ const normalizeRepoSlug = (value: string) => {
 }
 
 const getRepo = () => {
-	const repoSlug =
-		process.env.AGENT_LOOP_REPO ??
-		process.env.NEXT_PUBLIC_AGENT_LOOP_REPO ??
-		'bentossell/agent-loop'
+	const repoSlug = process.env.AGENT_LOOP_REPO
+	if (!repoSlug) {
+		throw new Error('Missing AGENT_LOOP_REPO environment variable')
+	}
+
 	const normalized = normalizeRepoSlug(repoSlug)
 	const [owner, repo] = normalized.split('/').filter(Boolean)
 
 	if (!owner || !repo) {
-		throw new Error('Invalid AGENT_LOOP_REPO value')
+		throw new Error('Invalid AGENT_LOOP_REPO value - expected format: owner/repo')
 	}
 
 	return { owner, repo }
